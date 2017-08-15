@@ -3,7 +3,7 @@ A small TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs
 
 ![logo](graphics/local-motive.png)
 
-[![npm version](https://badge.fury.io/js/local-motive.svg)](https://badge.fury.io/js/ng2-local-motive)
+[![npm version](https://badge.fury.io/js/local-motive.svg)](https://badge.fury.io/js/local-motive)
 [![build status](https://travis-ci.org/menehune23/local-motive.svg)](https://travis-ci.org/menehune23/local-motive)
 
 ## Installation
