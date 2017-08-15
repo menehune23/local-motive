@@ -1,4 +1,4 @@
-import { LocalModel } from './local-model';
+import { LocalModel } from '../local-model';
 import {} from 'jasmine';
 import './jest-global-mocks';
 
