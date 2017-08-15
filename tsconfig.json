@@ -10,7 +10,6 @@
     "lib/**/*"
   ],
   "exclude": [
-    "node_modules",
     "lib/test"
   ]
 }

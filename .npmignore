@@ -1,1 +1,4 @@
-lib/
+graphics/
+.travis.yml
+*.tgz
+*.log
