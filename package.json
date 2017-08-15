@@ -1,0 +1,50 @@
+{
+  "name": "local-motive",
+  "version": "1.0.0",
+  "description": "A small TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs with your models",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "lint": "tslint -p tslint.json lib/**/*.ts",
+    "pretest": "npm run lint",
+    "test": "jest"
+  },
+  "keywords": [
+    "localStorage",
+    "local storage",
+    "sessionStorage",
+    "session storage",
+    "web storage"
+  ],
+  "author": {
+    "name": "Andrew Meyer",
+    "email": "andrewm1100@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/menehune23/local-motive"
+  },
+  "bugs": {
+    "url": "https://github.com/menehune23/local-motive/issues"
+  },
+  "license": "MIT",
+  "jest": {
+    "transform": {
+      ".ts": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "\\.spec.ts",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^19.2.3",
+    "jest": "^20.0.3",
+    "ts-jest": "^20.0.10",
+    "tslint": "^5.6.0",
+    "typescript": "^2.4.2"
+  }
+}
