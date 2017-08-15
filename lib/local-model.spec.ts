@@ -1,4 +1,5 @@
 import { LocalModel } from './local-model';
+import {} from 'jasmine';
 import './jest-global-mocks';
 
 class ModelA extends LocalModel {
