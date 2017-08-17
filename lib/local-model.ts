@@ -17,7 +17,7 @@ export abstract class LocalModel {
    * @param session Whether or not to store in session storage.
    * Defaults to false.
    */
-  store(key: string, value: any, session?: boolean) {
+  store(key: string, value: any, session: boolean = false) {
     this.getStorage(session)[this.subpath(key)] = value;
   }
 
@@ -27,11 +27,11 @@ export abstract class LocalModel {
    * @param session Whether or not to store in session storage.
    * Defaults to false.
    */
-  load(key: string, session?: boolean): string {
+  load(key: string, session: boolean = false): string {
     return this.getStorage(session)[this.subpath(key)];
   }
 
-  private getStorage(session?: boolean): any {
+  private getStorage(session: boolean): any {
     return session ? sessionStorage : localStorage;
   }
 }

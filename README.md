@@ -22,7 +22,7 @@ $ npm install local-motive --save
 abstract class LocalModel {
   constructor(path: string);
   subpath(path: string): string;
-  store(key: string, value: any, session?: boolean): void;
+  store(key: string, value: any, session: boolean = false): void;
   load(key: string, session?: boolean): string;
 }
 ```
