@@ -1,6 +1,6 @@
 {
   "name": "local-motive",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A small TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs with your models",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,11 @@
     "local storage",
     "sessionStorage",
     "session storage",
-    "web storage"
+    "web storage",
+    "angular",
+    "angular 2",
+    "ng",
+    "ng2"
   ],
   "author": {
     "name": "Andrew Meyer",

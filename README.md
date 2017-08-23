@@ -22,7 +22,7 @@ $ npm install local-motive --save
 abstract class LocalModel {
   constructor(path: string);
   subpath(path: string): string;
-  store(key: string, value: any, session: boolean = false): void;
+  store(key: string, value: string, session: boolean = false): void;
   load(key: string, session?: boolean): string;
 }
 ```
@@ -118,6 +118,11 @@ export class DemoComponent {
   person2 = new Person('person2');
 }
 ```
+
+## Future Plans
+
+* Better support for arrays
+* Member decorators for better syntax
 
 ## License
 
