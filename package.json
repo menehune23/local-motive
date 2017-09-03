@@ -8,6 +8,7 @@
     "prepublish": "npm run test && npm run build",
     "build": "rm -rf dist && tsc",
     "lint": "tslint -p tslint.json lib/**/*.ts",
+    "pretest": "npm run lint",
     "test": "jest",
     "test:watch": "jest --watch"
   },

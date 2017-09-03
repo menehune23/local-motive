@@ -21,7 +21,7 @@ describe('decorators', () => {
       anyField: any;
 
       @LocalStorage()
-      arrayField: Array<number>;
+      arrayField: number[];
 
       @SessionStorage()
       stringFieldTemp: string;
@@ -33,7 +33,7 @@ describe('decorators', () => {
       anyFieldTemp: any;
 
       @SessionStorage()
-      arrayFieldTemp: Array<number>;
+      arrayFieldTemp: number[];
     }
 
     it('should store values', () => {
