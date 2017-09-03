@@ -14,10 +14,12 @@
     ],
     "object-literal-sort-keys": false,
     "max-classes-per-file": false,
+    "no-string-literal": false,
     "quotemark": [
       true,
       "single"
-    ]
+    ],
+    "trailing-comma": false
   },
   "rulesDirectory": []
 }

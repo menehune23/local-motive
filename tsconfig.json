@@ -4,7 +4,8 @@
     "module": "commonjs",
     "declaration": true,
     "outDir": "./dist",
-    "strict": true
+    "experimentalDecorators": true,
+    "strict": false
   },
   "include": [
     "lib/**/*"
