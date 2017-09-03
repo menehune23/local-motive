@@ -109,7 +109,7 @@ describe('decorators', () => {
     });
   });
 
-  fdescribe('caching', () => {
+  describe('caching', () => {
     it('should load cached value when cache enabled', () => {
       class Model {
         @LocalStorage(null, true)
