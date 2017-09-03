@@ -84,4 +84,60 @@ describe('decorators', () => {
       expect(model.arrayFieldTemp).toEqual([4, 5, 6]);
     });
   });
+
+  describe('storage key', () => {
+    it('should use field name if no key provided', () => {
+      class Model {
+        @LocalStorage()
+        field: string = 'foo';
+      }
+
+      const model = new Model();
+
+      expect(localStorage['field']).toEqual('{"v":"foo"}');
+    });
+
+    it('should honor key if provided', () => {
+      class Model {
+        @LocalStorage('myField')
+        field: string = 'foo';
+      }
+
+      const model = new Model();
+
+      expect(localStorage['myField']).toEqual('{"v":"foo"}');
+    });
+  });
+
+  fdescribe('caching', () => {
+    it('should load cached value when cache enabled', () => {
+      class Model {
+        @LocalStorage(null, true)
+        field: string = 'foo';
+      }
+
+      const model = new Model();
+
+      expect(localStorage['field']).toEqual('{"v":"foo"}');
+
+      localStorage['field'] = '{"v":"bar"}';
+
+      expect(model.field).toEqual('foo');
+    });
+
+    it('should not load cached value when cache disabled', () => {
+      class Model {
+        @LocalStorage(null, false)
+        field: string = 'foo';
+      }
+
+      const model = new Model();
+
+      expect(localStorage['field']).toEqual('{"v":"foo"}');
+
+      localStorage['field'] = '{"v":"bar"}';
+
+      expect(model.field).toEqual('bar');
+    });
+  });
 });
