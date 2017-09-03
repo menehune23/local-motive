@@ -140,4 +140,30 @@ describe('decorators', () => {
       expect(model.field).toEqual('bar');
     });
   });
+
+  describe('custom serialization and deserialization', () => {
+    it('should use custom serializer if provided', () => {
+      class Model {
+        @LocalStorage(null, null, (x) => x.toString(2))
+        field: number = 42;
+      }
+
+      const model = new Model();
+
+      expect(localStorage['field']).toEqual('101010');
+    });
+
+    it('should use custom deserializer if provided', () => {
+      class Model {
+        @LocalStorage(null, null, null, (x) => parseInt(x, 2))
+        field: number;
+      }
+
+      localStorage['field'] = '101010';
+
+      const model = new Model();
+
+      expect(model.field).toEqual(42);
+    });
+  });
 });
