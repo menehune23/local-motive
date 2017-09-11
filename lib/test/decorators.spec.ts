@@ -1,6 +1,7 @@
 import {} from 'jasmine';
 import './jest-global-mocks';
-import {LocalStorage, SessionStorage} from '../decorators';
+import { LocalModel } from '../local-model';
+import { Local, LocalStorage, SessionStorage } from '../decorators';
 
 describe('decorators', () => {
 
@@ -10,7 +11,8 @@ describe('decorators', () => {
   });
 
   describe('storing and loading', () => {
-    class Model {
+    @Local
+    class Model extends LocalModel {
       @LocalStorage()
       stringField: string;
 
@@ -34,10 +36,19 @@ describe('decorators', () => {
 
       @SessionStorage()
       arrayFieldTemp: number[];
+
+      subModelA: SubModel = new SubModel(this.subpath('A'));
+      subModelB: SubModel = new SubModel(this.subpath('B'));
     }
 
-    it('should store values', () => {
-      const model = new Model();
+    @Local
+    class SubModel extends LocalModel {
+      @LocalStorage()
+      someField: string;
+    }
+
+    it('should store correct values', () => {
+      const model = new Model('model');
 
       model.stringField = 'foo';
       model.numberField = 42.314;
@@ -49,34 +60,45 @@ describe('decorators', () => {
       model.anyFieldTemp = { fizz: 'buzz' };
       model.arrayFieldTemp = [4, 5, 6];
 
-      expect(localStorage['stringField']).toEqual('{"v":"foo"}');
-      expect(localStorage['numberField']).toEqual('{"v":42.314}');
-      expect(localStorage['anyField']).toEqual('{"v":{"foo":"bar"}}');
-      expect(localStorage['arrayField']).toEqual('{"v":[1,2,3]}');
+      model.subModelA.someField = 'a';
+      model.subModelB.someField = 'b';
 
-      expect(sessionStorage['stringFieldTemp']).toEqual('{"v":"bar"}');
-      expect(sessionStorage['numberFieldTemp']).toEqual('{"v":3.14}');
-      expect(sessionStorage['anyFieldTemp']).toEqual('{"v":{"fizz":"buzz"}}');
-      expect(sessionStorage['arrayFieldTemp']).toEqual('{"v":[4,5,6]}');
+      expect(localStorage['model/stringField']).toEqual('{"val":"foo"}');
+      expect(localStorage['model/numberField']).toEqual('{"val":42.314}');
+      expect(localStorage['model/anyField']).toEqual('{"val":{"foo":"bar"}}');
+      expect(localStorage['model/arrayField']).toEqual('{"val":[1,2,3]}');
+
+      expect(sessionStorage['model/stringFieldTemp']).toEqual('{"val":"bar"}');
+      expect(sessionStorage['model/numberFieldTemp']).toEqual('{"val":3.14}');
+      expect(sessionStorage['model/anyFieldTemp']).toEqual('{"val":{"fizz":"buzz"}}');
+      expect(sessionStorage['model/arrayFieldTemp']).toEqual('{"val":[4,5,6]}');
+
+      expect(localStorage['model/A/someField']).toEqual('{"val":"a"}');
+      expect(localStorage['model/B/someField']).toEqual('{"val":"b"}');
     });
 
-    it('should load values', () => {
-      localStorage['stringField'] = '{"v":"foo"}';
-      localStorage['numberField'] = '{"v":42.314}';
-      localStorage['anyField'] = '{"v":{"foo":"bar"}}';
-      localStorage['arrayField'] = '{"v":[1,2,3]}';
+    it('should load correct values', () => {
+      localStorage['model/stringField'] = '{"val":"foo"}';
+      localStorage['model/numberField'] = '{"val":42.314}';
+      localStorage['model/anyField'] = '{"val":{"foo":"bar"}}';
+      localStorage['model/arrayField'] = '{"val":[1,2,3]}';
 
-      sessionStorage['stringFieldTemp'] = '{"v":"bar"}';
-      sessionStorage['numberFieldTemp'] = '{"v":3.14}';
-      sessionStorage['anyFieldTemp'] = '{"v":{"fizz":"buzz"}}';
-      sessionStorage['arrayFieldTemp'] = '{"v":[4,5,6]}';
+      sessionStorage['model/stringFieldTemp'] = '{"val":"bar"}';
+      sessionStorage['model/numberFieldTemp'] = '{"val":3.14}';
+      sessionStorage['model/anyFieldTemp'] = '{"val":{"fizz":"buzz"}}';
+      sessionStorage['model/arrayFieldTemp'] = '{"val":[4,5,6]}';
 
-      const model = new Model();
+      localStorage['model/A/someField'] = '{"val":"a"}';
+      localStorage['model/B/someField'] = '{"val":"b"}';
+
+      const model = new Model('model');
 
       expect(model.stringField).toEqual('foo');
       expect(model.numberField).toEqual(42.314);
       expect(model.anyField).toEqual({ foo: 'bar' });
       expect(model.arrayField).toEqual([1, 2, 3]);
+      expect(model.subModelA.someField).toEqual('a');
+      expect(model.subModelB.someField).toEqual('b');
 
       expect(model.stringFieldTemp).toEqual('bar');
       expect(model.numberFieldTemp).toEqual(3.14);
@@ -87,82 +109,80 @@ describe('decorators', () => {
 
   describe('storage key', () => {
     it('should use field name if no key provided', () => {
-      class Model {
+      @Local
+      class Model extends LocalModel {
         @LocalStorage()
         field: string = 'foo';
       }
 
-      const model = new Model();
-
-      expect(localStorage['field']).toEqual('{"v":"foo"}');
+      const model = new Model('model');
+      expect(localStorage['model/field']).toEqual('{"val":"foo"}');
     });
 
     it('should honor key if provided', () => {
-      class Model {
+      @Local
+      class Model extends LocalModel {
         @LocalStorage('myField')
         field: string = 'foo';
       }
 
-      const model = new Model();
-
-      expect(localStorage['myField']).toEqual('{"v":"foo"}');
+      const model = new Model('model');
+      expect(localStorage['model/myField']).toEqual('{"val":"foo"}');
     });
   });
 
   describe('caching', () => {
     it('should load cached value when cache enabled', () => {
-      class Model {
+      @Local
+      class Model extends LocalModel {
         @LocalStorage(null, true)
         field: string = 'foo';
       }
 
-      const model = new Model();
+      const model = new Model('model');
+      expect(localStorage['model/field']).toEqual('{"val":"foo"}');
 
-      expect(localStorage['field']).toEqual('{"v":"foo"}');
-
-      localStorage['field'] = '{"v":"bar"}';
-
+      localStorage['model/field'] = '{"val":"bar"}';
       expect(model.field).toEqual('foo');
     });
 
     it('should not load cached value when cache disabled', () => {
-      class Model {
+      @Local
+      class Model extends LocalModel {
         @LocalStorage(null, false)
         field: string = 'foo';
       }
 
-      const model = new Model();
+      const model = new Model('model');
+      expect(localStorage['model/field']).toEqual('{"val":"foo"}');
 
-      expect(localStorage['field']).toEqual('{"v":"foo"}');
-
-      localStorage['field'] = '{"v":"bar"}';
-
+      localStorage['model/field'] = '{"val":"bar"}';
       expect(model.field).toEqual('bar');
     });
   });
 
   describe('custom serialization and deserialization', () => {
     it('should use custom serializer if provided', () => {
-      class Model {
-        @LocalStorage(null, null, (x) => x.toString(2))
+      @Local
+      class Model extends LocalModel {
+        @LocalStorage(null, true, (x) => x.toString(2))
         field: number = 42;
       }
 
-      const model = new Model();
-
-      expect(localStorage['field']).toEqual('101010');
+      const model = new Model('model');
+      expect(localStorage['model/field']).toEqual('101010');
     });
 
     it('should use custom deserializer if provided', () => {
-      class Model {
-        @LocalStorage(null, null, null, (x) => parseInt(x, 2))
-        field: number;
+      @Local
+      class Model extends LocalModel {
+        @LocalStorage(null, true, null, (x) => parseInt(x, 2))
+          field: number;
       }
 
-      localStorage['field'] = '101010';
+      localStorage['model/field'] = '101010';
 
-      const model = new Model();
-
+      const model = new Model('model');
       expect(model.field).toEqual(42);
     });
   });

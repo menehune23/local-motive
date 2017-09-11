@@ -3,16 +3,16 @@ export abstract class LocalModel {
   constructor(private path: string) { }
 
   /**
-   * Generates a subpath, relative to this model's path.
+   * Generates a storage subpath, relative to this model's path.
    * @param path Path to place under this model's path.
    */
   subpath(path: string): string {
-    return this.path + '/' + path;
+    return `${this.path}/${path}`;
   }
 
   /**
    * Stores a value in local or session storage.
-   * @param key Storage key, relative to this model's path.
+   * @param key Storage key, relative to this model's storage path.
    * @param value Value to store.
    * @param session Whether or not to store in session storage.
    * Defaults to false.
@@ -23,7 +23,7 @@ export abstract class LocalModel {
 
   /**
    * Retrieves a value from local or session storage.
-   * @param key Storage key, relative to this model's path.
+   * @param key Storage key, relative to this model's storage path.
    * @param session Whether or not to store in session storage.
    * Defaults to false.
    */
