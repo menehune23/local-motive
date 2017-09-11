@@ -12,6 +12,16 @@ class FieldConfig {
 
 const fieldConfigs: any = {};
 
+/**
+ * Stores this field in local storage. Requires the containing
+ * class to be a `LocalModel` decorated with `@Local`.
+ * @param key Storage key, relative to this model's storage path.
+ * Defaults to field name.
+ * @param cache Whether or not to cache a copy this field's value
+ * to increase performance. Defaults to true.
+ * @param serialize Custom serializer function.
+ * @param deserialize Custom deserializer function.
+ */
 export function LocalStorage(
   key?: string,
   cache: boolean = true,
@@ -23,6 +33,16 @@ export function LocalStorage(
   }
 }
 
+/**
+ * Stores this field in session storage. Requires the containing
+ * class to be a `LocalModel` decorated with `@Local`.
+ * @param key Storage key, relative to this model's storage path.
+ * Defaults to field name.
+ * @param cache Whether or not to cache a copy this field's value
+ * to increase performance. Defaults to true.
+ * @param serialize Custom serializer function.
+ * @param deserialize Custom deserializer function.
+ */
 export function SessionStorage(
   key?: string,
   cache: boolean = true,
@@ -34,6 +54,10 @@ export function SessionStorage(
   }
 }
 
+/**
+ * Allows this class to support local and session storage
+ * via the `@LocalStorage` and `@SessionStorage` decorators.
+ */
 export function Local(constructor: Function) {
   const newConstructor = function(...args: any[]) {
     for (let field in fieldConfigs) {
