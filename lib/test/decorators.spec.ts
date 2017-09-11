@@ -37,8 +37,12 @@ describe('decorators', () => {
       @SessionStorage()
       arrayFieldTemp: number[];
 
-      subModelA: SubModel = new SubModel(this.subpath('A'));
-      subModelB: SubModel = new SubModel(this.subpath('B'));
+      subModel: SubModel = new SubModel(this.subpath('A'));
+
+      arrayOfSubModels = [
+        new SubModel(this.subpath('B', 0)),
+        new SubModel(this.subpath('B', 1))
+      ];
     }
 
     @Local
@@ -60,8 +64,9 @@ describe('decorators', () => {
       model.anyFieldTemp = { fizz: 'buzz' };
       model.arrayFieldTemp = [4, 5, 6];
 
-      model.subModelA.someField = 'a';
-      model.subModelB.someField = 'b';
+      model.subModel.someField = 'a';
+      model.arrayOfSubModels[0].someField = 'b0';
+      model.arrayOfSubModels[1].someField = 'b1';
 
       expect(localStorage['model/stringField']).toEqual('{"val":"foo"}');
       expect(localStorage['model/numberField']).toEqual('{"val":42.314}');
@@ -74,7 +79,8 @@ describe('decorators', () => {
       expect(sessionStorage['model/arrayFieldTemp']).toEqual('{"val":[4,5,6]}');
 
       expect(localStorage['model/A/someField']).toEqual('{"val":"a"}');
-      expect(localStorage['model/B/someField']).toEqual('{"val":"b"}');
+      expect(localStorage['model/B/0/someField']).toEqual('{"val":"b0"}');
+      expect(localStorage['model/B/1/someField']).toEqual('{"val":"b1"}');
     });
 
     it('should load correct values', () => {
@@ -89,7 +95,8 @@ describe('decorators', () => {
       sessionStorage['model/arrayFieldTemp'] = '{"val":[4,5,6]}';
 
       localStorage['model/A/someField'] = '{"val":"a"}';
-      localStorage['model/B/someField'] = '{"val":"b"}';
+      localStorage['model/B/0/someField'] = '{"val":"b0"}';
+      localStorage['model/B/1/someField'] = '{"val":"b1"}';
 
       const model = new Model('model');
 
@@ -97,13 +104,15 @@ describe('decorators', () => {
       expect(model.numberField).toEqual(42.314);
       expect(model.anyField).toEqual({ foo: 'bar' });
       expect(model.arrayField).toEqual([1, 2, 3]);
-      expect(model.subModelA.someField).toEqual('a');
-      expect(model.subModelB.someField).toEqual('b');
 
       expect(model.stringFieldTemp).toEqual('bar');
       expect(model.numberFieldTemp).toEqual(3.14);
       expect(model.anyFieldTemp).toEqual({ fizz: 'buzz' });
       expect(model.arrayFieldTemp).toEqual([4, 5, 6]);
+
+      expect(model.subModel.someField).toEqual('a');
+      expect(model.arrayOfSubModels[0].someField).toEqual('b0');
+      expect(model.arrayOfSubModels[1].someField).toEqual('b1');
     });
   });
 

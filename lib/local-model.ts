@@ -5,9 +5,10 @@ export abstract class LocalModel {
   /**
    * Generates a storage subpath, relative to this model's path.
    * @param path Path to place under this model's path.
+   * @param index Optional index value for generating an indexed path.
    */
-  subpath(path: string): string {
-    return `${this.path}/${path}`;
+  subpath(path: string, index?: number): string {
+    return `${this.path}/${path}${(index != null) ? `/${index}` : ''}`;
   }
 
   /**
