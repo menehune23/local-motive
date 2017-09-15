@@ -13,7 +13,7 @@ const fieldConfigs: any = {};
 
 /**
  * Stores this field in local storage. Requires the containing
- * class to be a `LocalModel` decorated with `@Local`.
+ * class to extend `LocalModel`.
  * @param key Storage key, relative to this model's storage path.
  * Defaults to field name.
  * @param defaultValue Optional default value to return on retrieval
@@ -37,7 +37,7 @@ export function LocalStorage(
 
 /**
  * Stores this field in session storage. Requires the containing
- * class to be a `LocalModel` decorated with `@Local`.
+ * class to extend `LocalModel`.
  * @param key Storage key, relative to this model's storage path.
  * Defaults to field name.
  * @param defaultValue Optional default value to return on retrieval
