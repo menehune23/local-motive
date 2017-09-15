@@ -19,6 +19,15 @@ describe('Local Motive', () => {
       stringField: string;
 
       @LocalStorage()
+      implicitlyUndefinedField: any;
+
+      @LocalStorage()
+      explicitlyUndefinedField: any;
+
+      @LocalStorage()
+      nullField: any;
+
+      @LocalStorage()
       numberField: number;
 
       @LocalStorage()
@@ -49,6 +58,8 @@ describe('Local Motive', () => {
       const model = new Model('model');
 
       model.stringField = 'foo';
+      model.explicitlyUndefinedField = undefined;
+      model.nullField = null;
       model.numberField = 42.314;
       model.anyField = { foo: 'bar' };
       model.arrayField = [1, 2, 3];
@@ -58,6 +69,9 @@ describe('Local Motive', () => {
       model.arrayOfSubModels[1].someField = 'b1';
 
       expect(localStorage.getItem('model/stringField')).toEqual('{"val":"foo"}');
+      expect(localStorage.getItem('model/implicitlyUndefinedField')).toBeNull();
+      expect(localStorage.getItem('model/explicitlyUndefinedField')).toEqual('{}');
+      expect(localStorage.getItem('model/nullField')).toEqual('{"val":null}');
       expect(localStorage.getItem('model/numberField')).toEqual('{"val":42.314}');
       expect(localStorage.getItem('model/anyField')).toEqual('{"val":{"foo":"bar"}}');
       expect(localStorage.getItem('model/arrayField')).toEqual('{"val":[1,2,3]}');
@@ -70,6 +84,8 @@ describe('Local Motive', () => {
     it('should load correct values', () => {
 
       localStorage.setItem('model/stringField', '{"val":"foo"}');
+      localStorage.setItem('model/explicitlyUndefinedField', '{}');
+      localStorage.setItem('model/nullField', '{"val":null}');
       localStorage.setItem('model/numberField', '{"val":42.314}');
       localStorage.setItem('model/anyField', '{"val":{"foo":"bar"}}');
       localStorage.setItem('model/arrayField', '{"val":[1,2,3]}');
@@ -81,6 +97,9 @@ describe('Local Motive', () => {
       const model = new Model('model');
 
       expect(model.stringField).toEqual('foo');
+      expect(model.implicitlyUndefinedField).toBeUndefined();
+      expect(model.explicitlyUndefinedField).toBeUndefined();
+      expect(model.nullField).toBeNull();
       expect(model.numberField).toEqual(42.314);
       expect(model.anyField).toEqual({ foo: 'bar' });
       expect(model.arrayField).toEqual([1, 2, 3]);

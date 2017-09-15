@@ -106,7 +106,7 @@ function addProperty(target: LocalModel, name: string, config: FieldConfig) {
       return val;
     },
     set: (val) => {
-      if (valueContainer.val !== val) {
+      if (valueContainer.val !== val || val == null) {
         valueContainer.val = val;
         target.store(key, serialize(val), config.session);
       }
