@@ -8,7 +8,7 @@ A small TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs
 
 ## Installation
 
-To install, run:
+To install Local Motive, run:
 
 ```bash
 $ npm install local-motive --save
@@ -16,18 +16,49 @@ $ npm install local-motive --save
 
 ## Usage
 
-`LocalModel` is an abstract class that provides the following interface:
+Local Motive provides [`LocalModel`](https://github.com/menehune23/local-motive/blob/master/lib/local-model.ts), an abstract class with the following interface:
 
 ```typescript
 abstract class LocalModel {
   constructor(path: string);
+
+  /**
+   * Generates a storage subpath, relative to this model's path.
+   * @param path Path to place under this model's path.
+   * @param index Optional index value for generating an indexed path.
+   */
   subpath(path: string): string;
+
+  /**
+   * Stores a value in local or session storage.
+   * @param key Storage key, relative to this model's storage path.
+   * @param value Value to store.
+   * @param session Whether or not to store in session storage.
+   * Defaults to false.
+   */
   store(key: string, value: string, session: boolean = false): void;
+
+  /**
+   * Retrieves a value from local or session storage.
+   * @param key Storage key, relative to this model's storage path.
+   * @param session Whether or not to store in session storage.
+   * Defaults to false.
+   */
   load(key: string, session?: boolean): string;
+
+  /**
+   * Deletes a value from local or session storage.
+   * @param key Storage key, relative to this model's storage path.
+   * @param session Whether or not to store in session storage.
+   * Defaults to false.
+   */
+  delete(key: string, session: boolean = false) {
+    this.getStorage(session).removeItem(key);
+  }
 }
 ```
 
-Simply extend the class as follows:
+To use the class, simply extend it as follows (or use [decorators](#decorators)):
 
 _person.model.ts_
 ```typescript
@@ -35,9 +66,6 @@ import { LocalModel } from 'local-motive';
 import { Phone } from './phone.model';
 
 export class Person extends LocalModel {
-  constructor(path: string) {
-    super(path);
-  }
 
   // Full name stored in local storage
 
@@ -71,9 +99,6 @@ _phone.model.ts_
 import { LocalModel } from 'local-motive';
 
 export class Phone extends LocalModel {
-  constructor(path: string) {
-    super(path);
-  }
 
   get number(): string {
     return this.load('number');
@@ -119,10 +144,52 @@ export class DemoComponent {
 }
 ```
 
-## Future Plans
+### Decorators
 
-* Better support for arrays
-* Member decorators for better syntax
+Local Motive also provides a decorator-based approach, which is often more convenient. Using decorators, the `Person` and `Phone` models above would become:
+
+_person.model.ts_
+```typescript
+import { LocalModel, Local, LocalStorage, SessionStorage } from 'local-motive';
+import { Phone } from './phone.model';
+
+@Local
+export class Person extends LocalModel {
+
+  @LocalStorage()
+  fullName: string;
+
+  @SessionStorage()
+  authKey: string;
+
+  // Differing paths here avoid conflicting storage keys for
+  // `primaryPhone.number` and `secondaryPhone.number`
+  primaryPhone = new Phone(this.subpath('primaryPhone'));
+  secondaryPhone = new Phone(this.subpath('secondaryPhone'));
+}
+```
+
+_phone.model.ts_
+```typescript
+import { LocalModel, Local, LocalStorage, SessionStorage } from 'local-motive';
+
+@Local
+export class Phone extends LocalModel {
+
+  @LocalStorage()
+  number: string;
+}
+```
+
+The `@LocalStorage` and `@SessionStorage` decorators support many more features, like:
+
+- Support for non-string types like numbers, objects, and arrays
+- Custom storage key
+- Default value
+- Custom serialization and deserialization
+
+For more info, see the [decorators source](https://github.com/menehune23/local-motive/blob/master/lib/decorators.ts).
+For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/decorators.spec.ts).
 
 ## License
 

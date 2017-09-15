@@ -4,7 +4,8 @@ class FieldConfig {
   constructor(
     public session: boolean,
     public key?: string,
-    public cache: boolean = true,
+    public defaultTo?: any,
+    public cache?: boolean,
     public serialize?: (_: any) => string,
     public deserialize?: (_: string) => any
   ) { }
@@ -17,19 +18,22 @@ const fieldConfigs: any = {};
  * class to be a `LocalModel` decorated with `@Local`.
  * @param key Storage key, relative to this model's storage path.
  * Defaults to field name.
+ * @param defaultTo Optional default value to return on retrieval
+ * if no value stored.
  * @param cache Whether or not to cache a copy this field's value
  * to increase performance. Defaults to true.
- * @param serialize Custom serializer function.
- * @param deserialize Custom deserializer function.
+ * @param serialize Optional serializer function.
+ * @param deserialize Optional deserializer function.
  */
 export function LocalStorage(
   key?: string,
+  defaultTo?: any,
   cache: boolean = true,
   serialize?: (_: any) => string,
   deserialize?: (_: string) => any
 ) {
   return (target: any, name: string) => {
-    fieldConfigs[name] = new FieldConfig(false, key, cache, serialize, deserialize);
+    fieldConfigs[name] = new FieldConfig(false, key, defaultTo, cache, serialize, deserialize);
   }
 }
 
@@ -38,19 +42,22 @@ export function LocalStorage(
  * class to be a `LocalModel` decorated with `@Local`.
  * @param key Storage key, relative to this model's storage path.
  * Defaults to field name.
+ * @param defaultTo Optional default value to return on retrieval
+ * if no value stored.
  * @param cache Whether or not to cache a copy this field's value
  * to increase performance. Defaults to true.
- * @param serialize Custom serializer function.
- * @param deserialize Custom deserializer function.
+ * @param serialize Optional serializer function.
+ * @param deserialize Optional deserializer function.
  */
 export function SessionStorage(
   key?: string,
+  defaultTo?: any,
   cache: boolean = true,
   serialize?: (_: any) => string,
   deserialize?: (_: string) => any
 ) {
   return (target: any, name: string) => {
-    fieldConfigs[name] = new FieldConfig(true, key, cache, serialize, deserialize);
+    fieldConfigs[name] = new FieldConfig(true, key, defaultTo, cache, serialize, deserialize);
   }
 }
 
@@ -60,11 +67,11 @@ export function SessionStorage(
  */
 export function Local(constructor: Function) {
   const newConstructor = function(this: LocalModel, ...args: any[]) {
+    constructor.apply(this, args);
+
     for (let field in fieldConfigs) {
       addProperty(this, field, fieldConfigs[field]);
     }
-
-    constructor.apply(this, args);
   }
 
   newConstructor.prototype = constructor.prototype;
@@ -85,11 +92,12 @@ function addProperty(target: LocalModel, name: string, config: FieldConfig) {
 
   Object.defineProperty(target, name, {
     get: () => {
-      if (config.cache && valueContainer.val) {
+      if (config.cache && valueContainer.val != null) {
         return valueContainer.val;
       }
 
-      const val = deserialize(target.load(key, config.session));
+      const str = target.load(key, config.session);
+      const val = (str != null) ? deserialize(str) : config.defaultTo;
 
       if (config.cache) {
         valueContainer.val = val;
