@@ -35,7 +35,7 @@ export abstract class LocalModel {
   /**
    * Deletes a value from local or session storage.
    * @param key Storage key, relative to this model's storage path.
-   * @param session Whether or not to store in session storage.
+   * @param session Whether or not to delete from session storage.
    * Defaults to false.
    */
   delete(key: string, session: boolean = false) {

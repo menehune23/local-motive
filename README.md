@@ -1,7 +1,7 @@
 # local-motive
 A small TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs with your models
 
-![logo](graphics/local-motive.png)
+![logo](https://github.com/menehune23/local-motive/blob/master/graphics/local-motive.png)
 
 [![npm version](https://badge.fury.io/js/local-motive.svg)](https://badge.fury.io/js/local-motive)
 [![build status](https://travis-ci.org/menehune23/local-motive.svg)](https://travis-ci.org/menehune23/local-motive)
@@ -49,12 +49,10 @@ abstract class LocalModel {
   /**
    * Deletes a value from local or session storage.
    * @param key Storage key, relative to this model's storage path.
-   * @param session Whether or not to store in session storage.
+   * @param session Whether or not to delete from session storage.
    * Defaults to false.
    */
-  delete(key: string, session: boolean = false) {
-    this.getStorage(session).removeItem(key);
-  }
+  delete(key: string, session: boolean = false);
 }
 ```
 
