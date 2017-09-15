@@ -164,7 +164,7 @@ describe('Local Motive', () => {
 
   describe('default value', () => {
 
-    it('should load default value if nothing stored', () => {
+    it('should load default value if no value stored', () => {
 
       @Local
       class Model extends LocalModel {
