@@ -66,13 +66,13 @@ export function SessionStorage(
  * via the `@LocalStorage` and `@SessionStorage` decorators.
  */
 export function Local(constructor: Function) {
-  const newConstructor = function(this: LocalModel, ...args: any[]) {
+  const newConstructor: any = function(this: LocalModel, ...args: any[]) {
 
     for (let field in fieldConfigs) {
       addProperty(this, field, fieldConfigs[field]);
     }
 
-    constructor.apply(this, args);
+    return constructor.apply(this, args);
   }
 
   newConstructor.prototype = constructor.prototype;
