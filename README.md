@@ -1,7 +1,7 @@
 # local-motive
-A small TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs with your models
+A small but powerful TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs in your models
 
-![logo](https://github.com/menehune23/local-motive/blob/master/graphics/local-motive.png)
+![logo](graphics/local-motive.png)
 
 [![npm version](https://badge.fury.io/js/local-motive.svg)](https://badge.fury.io/js/local-motive)
 [![build status](https://travis-ci.org/menehune23/local-motive.svg)](https://travis-ci.org/menehune23/local-motive)
@@ -16,95 +16,40 @@ $ npm install local-motive --save
 
 ## Usage
 
-Alongside its convenient [decorators](#decorators), Local Motive provides [`LocalModel`](https://github.com/menehune23/local-motive/blob/master/lib/local-model.ts), an abstract class with the following interface:
+Local Motive provides `@LocalStorage` and `@SessionStorage` decorators that handle storage of model and nested model changes. To use them, just extend the provided [`LocalModel`](#localmodel) abstract class and decorate your model with `@Local`.
 
-```typescript
-abstract class LocalModel {
-  constructor(path: string);
-
-  /**
-   * Generates a storage subpath, relative to this model's path.
-   * @param path Path to place under this model's path.
-   * @param index Optional index value for generating an indexed path.
-   */
-  subpath(path: string): string;
-
-  /**
-   * Stores a value in local or session storage.
-   * @param key Storage key, relative to this model's storage path.
-   * @param value Value to store.
-   * @param session Whether or not to store in session storage.
-   * Defaults to false.
-   */
-  store(key: string, value: string, session: boolean = false): void;
-
-  /**
-   * Retrieves a value from local or session storage.
-   * @param key Storage key, relative to this model's storage path.
-   * @param session Whether or not to store in session storage.
-   * Defaults to false.
-   */
-  load(key: string, session?: boolean): string;
-
-  /**
-   * Deletes a value from local or session storage.
-   * @param key Storage key, relative to this model's storage path.
-   * @param session Whether or not to delete from session storage.
-   * Defaults to false.
-   */
-  delete(key: string, session: boolean = false);
-}
-```
-
-To use the class, simply extend it as follows (though it is recommended to use the provided [decorators](#decorators)):
+`LocalModel` requires a `path` field, which is used to support storing changes to fields and nested models. It should be provided in the constructor of your derived model class. In addition, `LocalModel` provides a `subpath()` method for use in generating paths for nested models. See the example below.
 
 _person.model.ts_
 ```typescript
-import { LocalModel } from 'local-motive';
+import { LocalModel, Local, LocalStorage, SessionStorage } from 'local-motive';
 import { Phone } from './phone.model';
 
+@Local
 export class Person extends LocalModel {
 
-  // Full name stored in local storage
+  @LocalStorage()
+  fullName: string;
 
-  get fullName(): string {
-    return this.load('fullName');
-  }
-
-  set fullName(value: string) {
-    this.store('fullName', value);
-  }
-
-  // Auth key stored in session storage
-
-  get authKey(): string {
-    return this.load('authKey', true);
-  }
-
-  set authKey(value: string) {
-    this.store('authKey', value, true);
-  }
+  @SessionStorage()
+  authKey: string;
 
   // Differing paths here avoid conflicting storage keys for
   // `primaryPhone.number` and `secondaryPhone.number`
-  primaryPhone = new Phone(this.subpath('primaryPhone'));
-  secondaryPhone = new Phone(this.subpath('secondaryPhone'));
+  primaryPhone = new Phone(this.subpath('phone1'));
+  secondaryPhone = new Phone(this.subpath('phone2'));
 }
 ```
 
 _phone.model.ts_
 ```typescript
-import { LocalModel } from 'local-motive';
+import { LocalModel, Local, LocalStorage, SessionStorage } from 'local-motive';
 
+@Local
 export class Phone extends LocalModel {
 
-  get number(): string {
-    return this.load('number');
-  }
-
-  set number(value: string) {
-    this.store('number', value);
-  }
+  @LocalStorage()
+  number: string;
 }
 ```
 
@@ -142,51 +87,62 @@ export class DemoComponent {
 }
 ```
 
-### Decorators
+### Other Features
 
-Local Motive also provides a decorator-based approach, which is often more convenient. Using decorators, the `Person` and `Phone` models above would become:
-
-_person.model.ts_
-```typescript
-import { LocalModel, Local, LocalStorage, SessionStorage } from 'local-motive';
-import { Phone } from './phone.model';
-
-@Local
-export class Person extends LocalModel {
-
-  @LocalStorage()
-  fullName: string;
-
-  @SessionStorage()
-  authKey: string;
-
-  // Differing paths here avoid conflicting storage keys for
-  // `primaryPhone.number` and `secondaryPhone.number`
-  primaryPhone = new Phone(this.subpath('primaryPhone'));
-  secondaryPhone = new Phone(this.subpath('secondaryPhone'));
-}
-```
-
-_phone.model.ts_
-```typescript
-import { LocalModel, Local, LocalStorage, SessionStorage } from 'local-motive';
-
-@Local
-export class Phone extends LocalModel {
-
-  @LocalStorage()
-  number: string;
-}
-```
+#### Decorators
 
 The `@LocalStorage` and `@SessionStorage` decorators have many more features, like:
 
-- Support for non-string types like numbers, objects, arrays, and null
+- Support for non-string types like number, object, array, and null
 - Custom storage key
 - Default value
 - Custom serialization and deserialization
 
 For more info, see the [decorators source](https://github.com/menehune23/local-motive/blob/master/lib/decorators.ts).
+For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/decorators.spec.ts).
+
+#### LocalModel
+
+`LocalModel` provides the following interface and can even be used without decorators, if desired:
+
+```typescript
+abstract class LocalModel {
+  constructor(path: string);
+
+  /**
+   * Generates a storage subpath, relative to this model's path.
+   * @param path Path to place under this model's path.
+   * @param index Optional index value for generating an indexed path.
+   */
+  subpath(path: string, index?: number): string;
+
+  /**
+   * Stores a value in local or session storage.
+   * @param key Storage key, relative to this model's storage path.
+   * @param value Value to store.
+   * @param session Whether or not to store in session storage.
+   * Defaults to false.
+   */
+  store(key: string, value: string, session: boolean = false): void;
+
+  /**
+   * Retrieves a value from local or session storage.
+   * @param key Storage key, relative to this model's storage path.
+   * @param session Whether or not to store in session storage.
+   * Defaults to false.
+   */
+  load(key: string, session: boolean = false): string;
+
+  /**
+   * Deletes a value from local or session storage.
+   * @param key Storage key, relative to this model's storage path.
+   * @param session Whether or not to delete from session storage.
+   * Defaults to false.
+   */
+  delete(key: string, session: boolean = false);
+}
+```
+
 For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/decorators.spec.ts).
 
 ## A Word of Caution with Initialized Fields

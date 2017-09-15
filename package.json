@@ -1,7 +1,7 @@
 {
   "name": "local-motive",
-  "version": "1.1.1",
-  "description": "A small TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs with your models",
+  "version": "1.1.2",
+  "description": "A small but powerful TypeScript/ES5 library that simplifies the use of HTML5 Web Storage APIs in your models",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
