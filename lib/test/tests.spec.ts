@@ -173,6 +173,7 @@ describe('Local Motive', () => {
       }
 
       const model = new Model('model');
+
       expect(localStorage.getItem('model/field')).toBeNull();
       expect(model.field).toEqual('foo');
     });
@@ -189,6 +190,40 @@ describe('Local Motive', () => {
       const model = new Model('model');
 
       expect(model.field).toEqual('bar');
+    });
+
+    it('should ignore default if falsy value stored', () => {
+
+      @Local
+      class Model extends LocalModel {
+        @LocalStorage(null, 'foo')
+        explicitlyUndefinedField: any;
+
+        @LocalStorage(null, 'foo')
+        nullField: any;
+
+        @LocalStorage(null, 'foo')
+        emptyStringField: string;
+
+        @LocalStorage(null, true)
+        falseBooleanField: boolean;
+
+        @LocalStorage(null, 42)
+        zeroNumberField: number;
+      }
+
+      localStorage.setItem('model/explicitlyUndefinedField', '{}');
+      localStorage.setItem('model/nullField', '{"val":null}');
+      localStorage.setItem('model/emptyStringField', '{"val":""}');
+      localStorage.setItem('model/falseBooleanField', '{"val":false}');
+      localStorage.setItem('model/zeroNumberField', '{"val":0}');
+      const model = new Model('model');
+
+      expect(model.explicitlyUndefinedField).toBeUndefined();
+      expect(model.nullField).toBeNull();
+      expect(model.emptyStringField).toEqual('');
+      expect(model.falseBooleanField).toEqual(false);
+      expect(model.zeroNumberField).toEqual(0);
     });
   });
 
