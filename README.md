@@ -16,7 +16,7 @@ $ npm install local-motive --save
 
 ## Usage
 
-Local Motive provides [`LocalModel`](https://github.com/menehune23/local-motive/blob/master/lib/local-model.ts), an abstract class with the following interface:
+Alongside its convenient [decorators](#decorators), Local Motive provides [`LocalModel`](https://github.com/menehune23/local-motive/blob/master/lib/local-model.ts), an abstract class with the following interface:
 
 ```typescript
 abstract class LocalModel {
@@ -56,7 +56,7 @@ abstract class LocalModel {
 }
 ```
 
-To use the class, simply extend it as follows (though the recommendation is to use the provided [decorators](#decorators)):
+To use the class, simply extend it as follows (though it is recommended to use the provided [decorators](#decorators)):
 
 _person.model.ts_
 ```typescript
