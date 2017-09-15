@@ -227,7 +227,7 @@ describe('Local Motive', () => {
 
   describe('caching', () => {
 
-    it('should load cached value when cache enabled', () => {
+    it('should cache last loaded value when cache enabled', () => {
 
       class Model extends LocalModel {
         @LocalStorage(null, null, true)
@@ -235,13 +235,29 @@ describe('Local Motive', () => {
       }
 
       const model = new Model('model');
-      model.field = 'foo';
 
-      expect(localStorage.getItem('model/field')).toEqual('{"val":"foo"}');
+      localStorage.setItem('model/field', '{"val":"foo"}');
+      expect(model.field).toEqual('foo');
 
       localStorage.setItem('model/field', '{"val":"bar"}');
-
       expect(model.field).toEqual('foo');
+    });
+
+    it('should cache last stored value when cache enabled', () => {
+
+      class Model extends LocalModel {
+        @LocalStorage(null, null, true)
+        field: string;
+      }
+
+      const model = new Model('model');
+
+      localStorage.setItem('model/field', '{"val":"foo"}');
+      expect(model.field).toEqual('foo');
+
+      model.field = 'bar';
+      expect(localStorage.getItem('model/field')).toEqual('{"val":"bar"}');
+      expect(model.field).toEqual('bar');
     });
 
     it('should load latest value when cache disabled', () => {
@@ -252,12 +268,11 @@ describe('Local Motive', () => {
       }
 
       const model = new Model('model');
-      model.field = 'foo';
 
-      expect(localStorage.getItem('model/field')).toEqual('{"val":"foo"}');
+      localStorage.setItem('model/field', '{"val":"foo"}');
+      expect(model.field).toEqual('foo');
 
       localStorage.setItem('model/field', '{"val":"bar"}');
-
       expect(model.field).toEqual('bar');
     });
   });
