@@ -99,7 +99,7 @@ The `@LocalStorage` and `@SessionStorage` decorators have many more features, li
 - Custom serialization and deserialization
 
 For more info, see the [decorators source](https://github.com/menehune23/local-motive/blob/master/lib/decorators.ts).
-For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/decorators.spec.ts).
+For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/tests.spec.ts).
 
 #### LocalModel
 
@@ -143,7 +143,7 @@ abstract class LocalModel {
 }
 ```
 
-For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/decorators.spec.ts).
+For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/tests.spec.ts).
 
 ## A Word of Caution with Initialized Fields
 
