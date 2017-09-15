@@ -1,2 +1,1 @@
-export { LocalModel } from './local-model';
-export { Local, LocalStorage, SessionStorage } from './decorators';
+export { LocalModel, LocalStorage, SessionStorage } from './decorators';

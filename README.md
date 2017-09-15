@@ -16,16 +16,15 @@ $ npm install local-motive --save
 
 ## Usage
 
-Local Motive provides `@LocalStorage` and `@SessionStorage` decorators that handle storage of model and nested model changes. To use them, just extend the provided [`LocalModel`](#localmodel) abstract class and decorate your model with `@Local`.
+Local Motive provides `@LocalStorage` and `@SessionStorage` decorators that handle storage of model and nested model changes. To use them, just extend the provided [`LocalModel`](#localmodel) abstract class.
 
 `LocalModel` requires a `path` field, which is used to support storing changes to fields and nested models. It should be provided in the constructor of your derived model class. In addition, `LocalModel` provides a `subpath()` method for use in generating paths for nested models. See the example below.
 
 _person.model.ts_
 ```typescript
-import { LocalModel, Local, LocalStorage, SessionStorage } from 'local-motive';
+import { LocalModel, LocalStorage, SessionStorage } from 'local-motive';
 import { Phone } from './phone.model';
 
-@Local
 export class Person extends LocalModel {
 
   @LocalStorage()
@@ -43,9 +42,8 @@ export class Person extends LocalModel {
 
 _phone.model.ts_
 ```typescript
-import { LocalModel, Local, LocalStorage, SessionStorage } from 'local-motive';
+import { LocalModel, LocalStorage, SessionStorage } from 'local-motive';
 
-@Local
 export class Phone extends LocalModel {
 
   @LocalStorage()

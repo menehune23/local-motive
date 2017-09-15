@@ -1,5 +1,3 @@
-import { LocalModel } from './local-model';
-
 class FieldConfig {
   constructor(
     public session: boolean,
@@ -61,24 +59,58 @@ export function SessionStorage(
   }
 }
 
-/**
- * Allows this class to support local and session storage
- * via the `@LocalStorage` and `@SessionStorage` decorators.
- */
-export function Local(constructor: Function) {
-  const newConstructor: any = function(this: LocalModel, ...args: any[]) {
+export abstract class LocalModel {
 
-    for (let field in fieldConfigs) {
-      addProperty(this, field, fieldConfigs[field]);
+    constructor(private path: string) {
+      for (let field in fieldConfigs) {
+        addProperty(this, field, fieldConfigs[field]);
+      }
     }
 
-    return constructor.apply(this, args);
+    /**
+     * Generates a storage subpath, relative to this model's path.
+     * @param path Path to place under this model's path.
+     * @param index Optional index value for generating an indexed path.
+     */
+    subpath(path: string, index?: number): string {
+      return `${this.path}/${path}${(index != null) ? `/${index}` : ''}`;
+    }
+
+    /**
+     * Stores a value in local or session storage.
+     * @param key Storage key, relative to this model's storage path.
+     * @param value Value to store.
+     * @param session Whether or not to store in session storage.
+     * Defaults to false.
+     */
+    store(key: string, value: string, session: boolean = false) {
+      this.getStorage(session).setItem(this.subpath(key), value);
+    }
+
+    /**
+     * Retrieves a value from local or session storage.
+     * @param key Storage key, relative to this model's storage path.
+     * @param session Whether or not to store in session storage.
+     * Defaults to false.
+     */
+    load(key: string, session: boolean = false): string {
+      return this.getStorage(session).getItem(this.subpath(key));
+    }
+
+    /**
+     * Deletes a value from local or session storage.
+     * @param key Storage key, relative to this model's storage path.
+     * @param session Whether or not to delete from session storage.
+     * Defaults to false.
+     */
+    delete(key: string, session: boolean = false) {
+      this.getStorage(session).removeItem(this.subpath(key));
+    }
+
+    private getStorage(session: boolean): any {
+      return session ? sessionStorage : localStorage;
+    }
   }
-
-  newConstructor.prototype = constructor.prototype;
-
-  return newConstructor;
-}
 
 function addProperty(target: LocalModel, name: string, config: FieldConfig) {
   const valueContainer: any = {};

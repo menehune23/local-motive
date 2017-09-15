@@ -1,7 +1,6 @@
 import {} from 'jasmine';
 import './jest-global-mocks';
-import { LocalModel } from '../local-model';
-import { Local, LocalStorage, SessionStorage } from '../decorators';
+import { LocalModel, LocalStorage, SessionStorage } from '../decorators';
 
 describe('Local Motive', () => {
 
@@ -12,7 +11,6 @@ describe('Local Motive', () => {
 
   describe('basic operations', () => {
 
-    @Local
     class Model extends LocalModel {
 
       @LocalStorage()
@@ -50,7 +48,6 @@ describe('Local Motive', () => {
       ];
     }
 
-    @Local
     class SubModel extends LocalModel {
       @LocalStorage()
       someField: string;
@@ -141,7 +138,6 @@ describe('Local Motive', () => {
 
     it('should use field name if no key provided', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage()
         field: string;
@@ -155,7 +151,6 @@ describe('Local Motive', () => {
 
     it('should honor key if provided', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage('myField')
         field: string;
@@ -172,7 +167,6 @@ describe('Local Motive', () => {
 
     it('should load default value if no value stored', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage(null, 'foo')
         field: string;
@@ -186,7 +180,6 @@ describe('Local Motive', () => {
 
     it('should ignore default if value stored', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage(null, 'foo')
         field: string;
@@ -200,7 +193,6 @@ describe('Local Motive', () => {
 
     it('should ignore default if falsy value stored', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage(null, 'foo')
         explicitlyUndefinedField: any;
@@ -237,7 +229,6 @@ describe('Local Motive', () => {
 
     it('should load cached value when cache enabled', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage(null, null, true)
         field: string;
@@ -255,7 +246,6 @@ describe('Local Motive', () => {
 
     it('should load latest value when cache disabled', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage(null, null, false)
         field: string;
@@ -276,7 +266,6 @@ describe('Local Motive', () => {
 
     it('should use custom serializer if provided', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage(null, null, true, (x) => x.toString(2))
         field: number;
@@ -290,7 +279,6 @@ describe('Local Motive', () => {
 
     it('should use custom deserializer if provided', () => {
 
-      @Local
       class Model extends LocalModel {
         @LocalStorage(null, null, true, null, (x) => parseInt(x, 2))
           field: number;
