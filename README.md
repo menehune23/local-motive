@@ -58,7 +58,7 @@ abstract class LocalModel {
 }
 ```
 
-To use the class, simply extend it as follows (or use [decorators](#decorators)):
+To use the class, simply extend it as follows (though the recommendation is to use the provided [decorators](#decorators)):
 
 _person.model.ts_
 ```typescript
@@ -181,15 +181,19 @@ export class Phone extends LocalModel {
 }
 ```
 
-The `@LocalStorage` and `@SessionStorage` decorators support many more features, like:
+The `@LocalStorage` and `@SessionStorage` decorators have many more features, like:
 
-- Support for non-string types like numbers, objects, and arrays
+- Support for non-string types like numbers, objects, arrays, and null
 - Custom storage key
 - Default value
 - Custom serialization and deserialization
 
 For more info, see the [decorators source](https://github.com/menehune23/local-motive/blob/master/lib/decorators.ts).
 For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/decorators.spec.ts).
+
+## A Word of Caution with Initialized Fields
+
+While fields that have initial values can be decorated with the `@LocalStorage` or `@SessionStorage` decorators, the outcome will likely not be the desired one. This is because an initial value will overwrite any value in storage for a given decorated field. To provide an initial value for a decorated field that will only apply if no value is currently stored, use the `defaultValue` parameter in your decorator. See the [decorators source](https://github.com/menehune23/local-motive/blob/master/lib/decorators.ts) for more info.
 
 ## License
 

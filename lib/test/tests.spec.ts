@@ -19,6 +19,9 @@ describe('Local Motive', () => {
       stringField: string;
 
       @LocalStorage()
+      initializedField: string = 'bar';
+
+      @LocalStorage()
       implicitlyUndefinedField: any;
 
       @LocalStorage()
@@ -69,6 +72,7 @@ describe('Local Motive', () => {
       model.arrayOfSubModels[1].someField = 'b1';
 
       expect(localStorage.getItem('model/stringField')).toEqual('{"val":"foo"}');
+      expect(localStorage.getItem('model/initializedField')).toEqual('{"val":"bar"}');
       expect(localStorage.getItem('model/implicitlyUndefinedField')).toBeNull();
       expect(localStorage.getItem('model/explicitlyUndefinedField')).toEqual('{}');
       expect(localStorage.getItem('model/nullField')).toEqual('{"val":null}');
@@ -84,6 +88,7 @@ describe('Local Motive', () => {
     it('should load correct values', () => {
 
       localStorage.setItem('model/stringField', '{"val":"foo"}');
+      localStorage.setItem('model/initializedField', '{"val":"some ignored value"}');
       localStorage.setItem('model/explicitlyUndefinedField', '{}');
       localStorage.setItem('model/nullField', '{"val":null}');
       localStorage.setItem('model/numberField', '{"val":42.314}');
@@ -97,6 +102,7 @@ describe('Local Motive', () => {
       const model = new Model('model');
 
       expect(model.stringField).toEqual('foo');
+      expect(model.initializedField).toEqual('bar');
       expect(model.implicitlyUndefinedField).toBeUndefined();
       expect(model.explicitlyUndefinedField).toBeUndefined();
       expect(model.nullField).toBeNull();
