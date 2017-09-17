@@ -95,6 +95,7 @@ The `@LocalStorage` and `@SessionStorage` decorators have many more features, li
 - Custom storage key
 - Default value
 - Custom serialization and deserialization
+- Support for inherited properties
 
 For more info, see the [decorators source](https://github.com/menehune23/local-motive/blob/master/lib/decorators.ts).
 For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/tests.spec.ts).
