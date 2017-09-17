@@ -31,13 +31,7 @@ export function LocalStorage(
   deserialize?: (_: string) => any
 ) {
   return (target: any, name: string) => {
-    const t = target.constructor.name;
-
-    if (!fieldConfigs[t]) {
-      fieldConfigs[t] = {};
-    }
-
-    fieldConfigs[t][name] = new FieldConfig(false, key, defaultValue, cache, serialize, deserialize);
+    setFieldConfig(target, name, new FieldConfig(false, key, defaultValue, cache, serialize, deserialize));
   }
 }
 
@@ -61,14 +55,18 @@ export function SessionStorage(
   deserialize?: (_: string) => any
 ) {
   return (target: any, name: string) => {
-    const t = target.constructor.name;
-
-    if (!fieldConfigs[t]) {
-      fieldConfigs[t] = {};
-    }
-
-    fieldConfigs[t][name] = new FieldConfig(true, key, defaultValue, cache, serialize, deserialize);
+    setFieldConfig(target, name, new FieldConfig(true, key, defaultValue, cache, serialize, deserialize));
   }
+}
+
+function setFieldConfig(target: any, field: string, config: FieldConfig) {
+  const t = target.constructor.name;
+
+  if (!fieldConfigs[t]) {
+    fieldConfigs[t] = {};
+  }
+
+  fieldConfigs[t][field] = config;
 }
 
 export abstract class LocalModel {
@@ -129,10 +127,10 @@ export abstract class LocalModel {
 }
 
 function addProperty(target: LocalModel, name: string, config: FieldConfig) {
-  const valueContainer: any = {};
+  let cached: any;
   const key = config.key || name;
-  const serialize = config.serialize || ((_) => {
-    return JSON.stringify(valueContainer);
+  const serialize = config.serialize || ((val) => {
+    return JSON.stringify({ val: val });
   });
 
   const deserialize = config.deserialize || ((str) => {
@@ -141,23 +139,24 @@ function addProperty(target: LocalModel, name: string, config: FieldConfig) {
 
   Object.defineProperty(target, name, {
     get: () => {
-      if (config.cache && valueContainer.val != null) {
-        return valueContainer.val;
+      if (config.cache && cached != null) {
+        return cached;
       }
 
       const str = target.load(key, config.session);
       const val = (str != null) ? deserialize(str) : config.defaultValue;
 
       if (config.cache) {
-        valueContainer.val = val;
+        cached = val;
       }
 
       return val;
     },
     set: (val) => {
-      if (valueContainer.val !== val || val == null) {
-        valueContainer.val = val;
-        target.store(key, serialize(val), config.session);
+      target.store(key, serialize(val), config.session);
+
+      if (config.cache) {
+        cached = val;
       }
     },
     enumerable: true,
