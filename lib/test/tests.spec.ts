@@ -305,4 +305,39 @@ describe('Local Motive', () => {
       expect(model.field).toEqual(42);
     });
   });
+
+  describe('models with inherited properties', () => {
+
+    class BaseModel extends LocalModel {
+      @LocalStorage()
+      inheritedField: string;
+    }
+
+    class DerivedModel extends BaseModel {
+      @LocalStorage()
+      ownField: string;
+    }
+
+    it('should store correct values', () => {
+
+      const model = new DerivedModel('model');
+
+      model.inheritedField = 'foo';
+      model.ownField = 'bar';
+
+      expect(localStorage.getItem('model/inheritedField')).toEqual('{"val":"foo"}');
+      expect(localStorage.getItem('model/ownField')).toEqual('{"val":"bar"}');
+    });
+
+    it('should load correct values', () => {
+
+      localStorage.setItem('model/inheritedField', '{"val":"foo"}');
+      localStorage.setItem('model/ownField', '{"val":"bar"}');
+
+      const model = new DerivedModel('model');
+
+      expect(model.inheritedField).toEqual('foo');
+      expect(model.ownField).toEqual('bar');
+    });
+  });
 });

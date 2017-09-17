@@ -59,25 +59,28 @@ export function SessionStorage(
   }
 }
 
-const FIELD_CONFIGS_KEY = 'fieldConfigs';
-
-function getFieldConfig(target: any, field: string): FieldConfig {
-  const configs = Reflect.getOwnMetadata(FIELD_CONFIGS_KEY, target) || {};
-  return configs[field];
-}
+const FIELD_CONFIGS_KEY = 'local_motive:field_configs';
 
 function setFieldConfig(target: any, field: string, config: FieldConfig) {
-  const configs = Reflect.getOwnMetadata(FIELD_CONFIGS_KEY, target) || {};
+  const configs = getAllFieldConfigs(target);
   configs[field] = config;
+  setAllFieldConfigs(target, configs);
+}
+
+function getAllFieldConfigs(target: any): any {
+  return Reflect.getMetadata(FIELD_CONFIGS_KEY, target) || {};
+}
+
+function setAllFieldConfigs(target: any, configs: any) {
   Reflect.defineMetadata(FIELD_CONFIGS_KEY, configs, target);
 }
 
 export abstract class LocalModel {
 
   constructor(private path: string) {
-    const configs = Reflect.getOwnMetadata(FIELD_CONFIGS_KEY, this.constructor.prototype) || {};
+    const configs = getAllFieldConfigs(this.constructor.prototype);
 
-    for (let field in configs) {
+    for (const field in configs) {
       const config = configs[field];
 
       if (config) {
