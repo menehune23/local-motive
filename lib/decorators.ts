@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 class FieldConfig {
   constructor(
     public session: boolean,
@@ -8,8 +10,6 @@ class FieldConfig {
     public deserialize?: (_: string) => any
   ) { }
 }
-
-const fieldConfigs: any = {};
 
 /**
  * Stores this field in local storage. Requires the containing
@@ -59,24 +59,29 @@ export function SessionStorage(
   }
 }
 
+const FIELD_CONFIGS_KEY = 'fieldConfigs';
+
+function getFieldConfig(target: any, field: string): FieldConfig {
+  const configs = Reflect.getOwnMetadata(FIELD_CONFIGS_KEY, target) || {};
+  return configs[field];
+}
+
 function setFieldConfig(target: any, field: string, config: FieldConfig) {
-  const t = target.constructor.name;
-
-  if (!fieldConfigs[t]) {
-    fieldConfigs[t] = {};
-  }
-
-  fieldConfigs[t][field] = config;
+  const configs = Reflect.getOwnMetadata(FIELD_CONFIGS_KEY, target) || {};
+  configs[field] = config;
+  Reflect.defineMetadata(FIELD_CONFIGS_KEY, configs, target);
 }
 
 export abstract class LocalModel {
 
   constructor(private path: string) {
-    const t = (<any>this.constructor).name;
+    const configs = Reflect.getOwnMetadata(FIELD_CONFIGS_KEY, this.constructor.prototype) || {};
 
-    if (fieldConfigs.hasOwnProperty(t)) {
-      for (let field in fieldConfigs[t]) {
-        addProperty(this, field, fieldConfigs[t][field]);
+    for (let field in configs) {
+      const config = configs[field];
+
+      if (config) {
+        addProperty(this, field, config);
       }
     }
   }
