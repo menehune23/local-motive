@@ -20,8 +20,9 @@ Local Motive provides `@LocalStorage` and `@SessionStorage` decorators that hand
 
 `LocalModel` requires a `storagePath` field, which is used to support storing changes to fields and nested models. It should be provided in the constructor of your derived model class. In addition, `LocalModel` provides a `subpath()` method for use in generating storage paths for nested models. See the example below.
 
-_person.model.ts_
 ```typescript
+// person.model.ts //
+
 import { LocalModel, LocalStorage, SessionStorage } from 'local-motive';
 import { Phone } from './phone.model';
 
@@ -40,8 +41,9 @@ export class Person extends LocalModel {
 }
 ```
 
-_phone.model.ts_
 ```typescript
+// phone.model.ts //
+
 import { LocalModel, LocalStorage, SessionStorage } from 'local-motive';
 
 export class Phone extends LocalModel {
@@ -55,8 +57,9 @@ Now, when you modify values on your models, including nested models, the data wi
 
 This is especially useful if you're using a framework like [Angular](https://angular.io), where you can bind directly to locally-stored models in your views:
 
-_demo.component.ts_
 ```typescript
+// demo.component.ts //
+
 import { Component } from '@angular/core';
 import { Person } from './person.model';
 
