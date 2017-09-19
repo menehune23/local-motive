@@ -165,7 +165,7 @@ describe('Local Motive', () => {
       expect(sessionStorage.getItem('model/tempField')).toEqual('{"val":"temp"}');
       expect(localStorage.getItem('model/sub/field')).toEqual('{"val":"bar"}');
 
-      model.deleteAll();
+      model.clear();
 
       expect(localStorage.getItem('model/field')).toBeNull();
       expect(sessionStorage.getItem('model/tempField')).toBeNull();

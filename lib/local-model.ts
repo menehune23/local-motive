@@ -55,9 +55,10 @@ export abstract class LocalModel {
   }
 
   /**
-   * Deletes all stored values for this model and any submodels.
+   * Removes all values from both local and session storage for
+   * this model and any submodels.
    */
-  deleteAll() {
+  clear() {
     this.removeAllStored(localStorage);
     this.removeAllStored(sessionStorage);
   }

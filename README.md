@@ -142,9 +142,10 @@ abstract class LocalModel {
   delete(key: string, session: boolean = false);
 
   /**
-   * Deletes all stored values for this model and any submodels.
+   * Removes all values from both local and session storage for
+   * this model and any submodels.
    */
-  deleteAll();
+  clear();
 ```
 
 For usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/tests.spec.ts).
