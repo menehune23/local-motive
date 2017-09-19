@@ -1,6 +1,7 @@
 import {} from 'jasmine';
 import './jest-global-mocks';
-import { LocalModel, LocalStorage, SessionStorage } from '../decorators';
+import { LocalModel } from '../local-model';
+import { LocalStorage, SessionStorage } from '../decorators';
 
 describe('Local Motive', () => {
 
@@ -9,7 +10,7 @@ describe('Local Motive', () => {
     sessionStorage.clear();
   });
 
-  describe('basic operations', () => {
+  describe('storing and loading', () => {
 
     class Model extends LocalModel {
 
@@ -111,26 +112,64 @@ describe('Local Motive', () => {
       expect(model.arrayOfSubModels[0].someField).toEqual('b0');
       expect(model.arrayOfSubModels[1].someField).toEqual('b1');
     });
+  });
 
-    it('should delete correct values', () => {
+  describe('deleting', () => {
+
+    class Model extends LocalModel {
+
+      @LocalStorage()
+      field: string;
+
+      @SessionStorage()
+      tempField: string;
+
+      subModel: SubModel = new SubModel(this.subpath('sub'));
+    }
+
+    class SubModel extends LocalModel {
+      @LocalStorage()
+      field: string;
+    }
+
+    it('should delete field values', () => {
 
       const model = new Model('model');
 
-      model.stringField = 'foo';
+      model.field = 'foo';
       model.tempField = 'temp';
-      model.subModel.someField = 'a';
+      model.subModel.field = 'bar';
 
-      expect(localStorage.getItem('model/stringField')).toEqual('{"val":"foo"}');
+      expect(localStorage.getItem('model/field')).toEqual('{"val":"foo"}');
       expect(sessionStorage.getItem('model/tempField')).toEqual('{"val":"temp"}');
-      expect(localStorage.getItem('model/A/someField')).toEqual('{"val":"a"}');
+      expect(localStorage.getItem('model/sub/field')).toEqual('{"val":"bar"}');
 
-      model.delete('stringField');
+      model.delete('field');
       model.delete('tempField', true);
-      model.subModel.delete('someField');
+      model.subModel.delete('field');
 
-      expect(localStorage.getItem('model/stringField')).toBeNull();
+      expect(localStorage.getItem('model/field')).toBeNull();
       expect(sessionStorage.getItem('model/tempField')).toBeNull();
-      expect(localStorage.getItem('model/A/someField')).toBeNull();
+      expect(localStorage.getItem('model/sub/field')).toBeNull();
+    });
+
+    it('should delete entire model and submodel', () => {
+
+      const model = new Model('model');
+
+      model.field = 'foo';
+      model.tempField = 'temp';
+      model.subModel.field = 'bar';
+
+      expect(localStorage.getItem('model/field')).toEqual('{"val":"foo"}');
+      expect(sessionStorage.getItem('model/tempField')).toEqual('{"val":"temp"}');
+      expect(localStorage.getItem('model/sub/field')).toEqual('{"val":"bar"}');
+
+      model.deleteAll();
+
+      expect(localStorage.getItem('model/field')).toBeNull();
+      expect(sessionStorage.getItem('model/tempField')).toBeNull();
+      expect(localStorage.getItem('model/sub/field')).toBeNull();
     });
   });
 

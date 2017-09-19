@@ -14,6 +14,12 @@ class MockStorage {
     delete this.storage[key];
   }
 
+  get length() { return Object.keys(this.storage).length; }
+
+  key(i: number): string | null {
+    return (Object.keys(this.storage)[i]) || null;
+  }
+
   clear() {
     this.storage = {};
   }

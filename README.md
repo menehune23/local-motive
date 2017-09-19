@@ -18,7 +18,7 @@ $ npm install local-motive --save
 
 Local Motive provides `@LocalStorage` and `@SessionStorage` decorators that handle storage of model and nested model changes. To use them, just extend the provided [`LocalModel`](#localmodel) abstract class.
 
-`LocalModel` requires a `path` field, which is used to support storing changes to fields and nested models. It should be provided in the constructor of your derived model class. In addition, `LocalModel` provides a `subpath()` method for use in generating paths for nested models. See the example below.
+`LocalModel` requires a `storagePath` field, which is used to support storing changes to fields and nested models. It should be provided in the constructor of your derived model class. In addition, `LocalModel` provides a `subpath()` method for use in generating storage paths for nested models. See the example below.
 
 _person.model.ts_
 ```typescript
@@ -106,7 +106,8 @@ For additional usage examples, see the [test spec](https://github.com/menehune23
 
 ```typescript
 abstract class LocalModel {
-  constructor(path: string);
+
+  constructor(private storagePath: string);
 
   /**
    * Generates a storage subpath, relative to this model's path.
@@ -122,7 +123,7 @@ abstract class LocalModel {
    * @param session Whether or not to store in session storage.
    * Defaults to false.
    */
-  store(key: string, value: string, session: boolean = false): void;
+  store(key: string, value: string, session: boolean = false);
 
   /**
    * Retrieves a value from local or session storage.
@@ -139,10 +140,14 @@ abstract class LocalModel {
    * Defaults to false.
    */
   delete(key: string, session: boolean = false);
-}
+
+  /**
+   * Deletes all stored values for this model and any submodels.
+   */
+  deleteAll();
 ```
 
-For additional usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/tests.spec.ts).
+For usage examples, see the [test spec](https://github.com/menehune23/local-motive/blob/master/lib/test/tests.spec.ts).
 
 ## A Word of Caution with Initialized Fields
 
