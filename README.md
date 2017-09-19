@@ -134,9 +134,9 @@ abstract class LocalModel {
   load(key: string, session: boolean = false): string;
 
   /**
-   * Deletes a value from local or session storage.
+   * Removes a value from local or session storage.
    * @param key Storage key, relative to this model's storage path.
-   * @param session Whether or not to delete from session storage.
+   * @param session Whether or not to remove from session storage.
    * Defaults to false.
    */
   delete(key: string, session: boolean = false);
